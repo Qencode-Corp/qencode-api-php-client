@@ -36,6 +36,9 @@ try {
     do {
         sleep(5);
         $response = $task->getStatus();
+        if (is_array($response) and array_key_exists('percent', $response)) {
+            log_message("Completed: {$response['percent']}%");
+        }
     } while ($response['status'] != 'completed');
 
     foreach ($response['videos'] as $video) {
