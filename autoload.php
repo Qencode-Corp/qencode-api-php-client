@@ -9,9 +9,6 @@ $files = array(
     "Classes/Format.php",
     "Classes/Stream.php",
     "Classes/VideoCodecParameters.php",
-    "Classes/TranscodingTaskStatus.php",
-    "Classes/VideoStatus.php",
-    "Classes/VideoStorageInfo.php",
     "QencodeApiClient.php",
 );
 

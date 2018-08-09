@@ -113,6 +113,6 @@ class Stream {
      * Defaults to stereo
      * @var string
      */
-    public $downmix_mode;
+    //public $downmix_mode;
 
 }

@@ -23,13 +23,13 @@ class Format {
 
     /**
      * Segment duration to split media (in seconds). Defaults to 8.
-     * @var string
+     * @var int
      */
     public $segment_duration;
 
     /**
      * Contains a list of elements each describing a single view stream (e.g. for HLS format).
-     * @var string
+     * @var Stream
      */
     public $stream;
 }

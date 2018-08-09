@@ -10,6 +10,21 @@ class TranscodingTask {
     private $lastStatus;
 
     /**
+     * Video clip start time
+     */
+    public $start_time;
+
+    /**
+     * Video duration
+     */
+    public $duration;
+
+    /**
+     * JSON-encoded string containing a dictionary (key-value pairs) of params for video or image output path.
+     */
+    public $output_path_variables;
+
+    /**
      * Gets transcoding task token
      * @return string
      */
@@ -25,6 +40,7 @@ class TranscodingTask {
         return $this->statusUrl;
     }
 
+    
     /**
      * @param QencodeApiClient $api a reference to QencodeApiClient object
      * @param string $task_token transcoding task token
@@ -33,6 +49,9 @@ class TranscodingTask {
         $this->api = $api;
         $this->taskToken = $task_token;
         $this->statusUrl = null;
+        $this->start_time = null;
+        $this->duration = null;
+        $this->output_path_variables = new \stdClass();
     }
 
     /**
@@ -55,7 +74,15 @@ class TranscodingTask {
         if ($payload) {
             $params['payload'] = $payload;
         }
-
+        if ($this->start_time) {
+            $params['start_time'] = $this->start_time;
+        }
+        if ($this->duration) {
+            $params['duration'] = $this->duration;
+        }
+        if ($this->output_path_variables) {
+            $params['output_path_variables'] = json_encode($this->output_path_variables);
+        }
         $response = $this->api->post('start_encode', $params);
         $this->statusUrl = $response['status_url'];
         return $response;

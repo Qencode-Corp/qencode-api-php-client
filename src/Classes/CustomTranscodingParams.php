@@ -11,7 +11,7 @@ class CustomTranscodingParams {
 
     /**
      * A list of objects, each describing params for a single output video stream (MP4, WEBM, HLS or MPEG-DASH).
-     * @var string
+     * @var Format
      */
     public $format;
 }
