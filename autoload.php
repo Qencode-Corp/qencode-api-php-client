@@ -2,6 +2,7 @@
 $files = array(
     "Exceptions/QencodeException.php",
     "Exceptions/QencodeApiException.php",
+    "Exceptions/QencodeClientException.php",
     "Classes/TranscodingTask.php",
     "Classes/TranscodingTaskCollection.php",
     "Classes/CustomTranscodingParams.php",

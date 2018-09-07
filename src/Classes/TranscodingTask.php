@@ -2,6 +2,8 @@
 
 namespace Qencode\Classes;
 
+use Qencode\Exceptions\QencodeClientException;
+
 class TranscodingTask {
 
     private $api;
@@ -119,15 +121,15 @@ class TranscodingTask {
     public function getStatus() {
         $params = array('task_tokens[]' => $this->taskToken);
         //TODO: fallback to /v1/status
-        //echo "Checking status: ".$this->statusUrl."\n";
         $response = $this->api->post($this->statusUrl, $params);
-        $status = $response['statuses'][$this->taskToken];
-        $this->lastStatus = $status;
-        if (is_array($status) and array_key_exists('status_url', $status)) {
-            $this->statusUrl = $status['status_url'];
+        $this->lastStatus = $response['statuses'][$this->taskToken];
+        if ($this->lastStatus == null) {
+            throw new QencodeClientException('Task '. $this->taskToken. ' not found!');
         }
-
-        return $status;
+        if (array_key_exists('status_url', $this->lastStatus)) {
+            $this->statusUrl = $this->lastStatus['status_url'];
+        }
+        return $this->lastStatus;
     }
 
     /**

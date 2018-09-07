@@ -18,7 +18,7 @@ $q = new QencodeApiClient($apiKey);
 
 try {
 
-    $task = $q->createTask();
+    $task = $q->createTask();  // /v1/create_task
     log_message("Created task: ".$task->getTaskToken());
 
     //set start time (in seconds) in input video to begin transcoding from
@@ -47,13 +47,16 @@ try {
     echo "DONE!";
 
 
+} catch (QencodeClientException $e) {
+    // We got some inconsistent state in client application (e.g. task_token not found when requesting status)
+    log_message('Qencode Client Exception: ' . $e->getCode() . ' ' . $e->getMessage());
 } catch (QencodeApiException $e) {
     // API response status code was not successful
     log_message('Qencode API Exception: ' . $e->getCode() . ' ' . $e->getMessage());
 } catch (QencodeException $e) {
     // API call failed
     log_message('Qencode Exception: ' . $e->getMessage());
-    var_export($pf->getLastResponseRaw());
+    var_export($q->getLastResponseRaw());
 }
 
 function log_message($msg) {

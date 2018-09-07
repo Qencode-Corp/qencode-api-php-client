@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../autoload.php';
 
 use Qencode\Exceptions\QencodeApiException;
+use Qencode\Exceptions\QencodeClientException;
 use Qencode\Exceptions\QencodeException;
 use Qencode\Classes\CustomTranscodingParams;
 use Qencode\Classes\Format;
@@ -11,25 +12,27 @@ use Qencode\Classes\Libx264_VideoCodecParameters;
 use Qencode\QencodeApiClient;
 
 // Replace this with your API key
-$apiKey = '5a5db6fa5b4c5';
+$apiKey = 'abcdefgh';
+$video_url = 'https://qa.qencode.com/static/1.mp4';
 
-$transcodingProfileId = '5a5db6fa5b8ac';
-
-$video_url = 'https://qa.stagevids.com/static/1.mp4';
-
-$q = new QencodeApiClient($apiKey, 'https://api-qa.qencode.com');
+$q = new QencodeApiClient($apiKey);
 
 try {
 
     $task = $q->createTask();
+    log_message("Created task: ".$task->getTaskToken());
+
     $params = new CustomTranscodingParams();
     $params->source = $video_url;
 
     $format = new Format();
     $format->destination = new Destination();
-    $format->destination->url = "s3://s3-eu-west-2.amazonaws.com/qencode-test";
-    $format->destination->key = "AKIAIKZIPSJ7SDAIWK4A";
-    $format->destination->secret = "h2TGNXeT49OT+DtZ3RGr+94HEhptS6oYsmXCwWuL";
+    $format->destination->url = "s3://s3-your-region.amazonaws.com/your-bucket/folder";
+    $format->destination->key = "your-access-key";
+    $format->destination->secret = "your-secret-key";
+    $format->destination->permissions = "public-read";
+    $format->destination->storage_class = "REDUCED_REDUNDANCY";
+    $format->segment_duration = 4;
     $format->output = "advanced_hls";
 
     $stream = new Stream();
@@ -53,21 +56,28 @@ try {
     do {
         sleep(5);
         $response = $task->getStatus();
-        print_r($response);
-        echo "<BR><BR>";
+        if (is_array($response) and array_key_exists('percent', $response)) {
+            log_message("Completed: {$response['percent']}%");
+        }
     } while ($response['status'] != 'completed');
 
     foreach ($response['videos'] as $video) {
-        echo $video['user_tag'] . ': ' . $video['url'].'<BR>';
+        log_message($video['user_tag'] . ': ' . $video['url']);
     }
     echo "DONE!";
 
-
+} catch (QencodeClientException $e) {
+    // We got some inconsistent state in client application (e.g. task_token not found when requesting status)
+    log_message('Qencode Client Exception: ' . $e->getCode() . ' ' . $e->getMessage());
 } catch (QencodeApiException $e) {
     // API response status code was not successful
-    echo 'Qencode API Exception: ' . $e->getCode() . ' ' . $e->getMessage();
+    log_message('Qencode API Exception: ' . $e->getCode() . ' ' . $e->getMessage());
 } catch (QencodeException $e) {
     // API call failed
-    echo 'Qencode Exception: ' . $e->getMessage();
+    log_message('Qencode Exception: ' . $e->getMessage());
     var_export($q->getLastResponseRaw());
+}
+
+function log_message($msg) {
+    echo $msg."\n";
 }

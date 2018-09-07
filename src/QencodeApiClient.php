@@ -131,9 +131,9 @@ class QencodeApiClient
         if (!empty($params) & is_array($params)) {
             $params = http_build_query($params);
         }
-        //echo $url;
-        //echo "<br>";
-        //echo $params."<br><br>";
+        #echo $url;
+        #echo "\n";
+        #echo $params."\n\n";
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_USERPWD, $this->key);
@@ -161,8 +161,8 @@ class QencodeApiClient
             throw new QencodeException('CURL: ' . $error, $errorNumber);
         }
 
-        //echo $this->lastResponseRaw;
-        //echo "<br><br>";
+        #echo $this->lastResponseRaw;
+        #echo "\n\n";
         $this->lastResponse = $response = json_decode($this->lastResponseRaw, true);
         //print_r($response);
 
