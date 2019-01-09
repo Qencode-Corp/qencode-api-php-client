@@ -2,6 +2,6 @@
   "name": "qencode/api-client",
   "description": "PHP library for interacting with Qencode API",
   "require": {
-    "php": "^5.4"
+    "php": ">=5.4"
   }
 }
