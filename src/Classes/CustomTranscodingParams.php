@@ -14,4 +14,6 @@ class CustomTranscodingParams {
      * @var Format
      */
     public $format;
+
+    public $callback_url;
 }

@@ -54,6 +54,7 @@ class TranscodingTask {
         $this->start_time = null;
         $this->duration = null;
         $this->output_path_variables = new \stdClass();
+        $this->subtitles = null;
     }
 
     /**
@@ -84,6 +85,9 @@ class TranscodingTask {
         }
         if ($this->output_path_variables) {
             $params['output_path_variables'] = json_encode($this->output_path_variables);
+        }
+        if ($this->subtitles) {
+            $params['subtitles'] = json_encode($this->subtitles);
         }
         $response = $this->api->post('start_encode', $params);
         $this->statusUrl = $response['status_url'];
@@ -138,5 +142,17 @@ class TranscodingTask {
      */
     public function getLastStatus() {
         return $this->lastStatus;
+    }
+
+    private $subtitles;
+
+    public function addSubtitles($source, $language) {
+        if ($this->subtitles == null) {
+            $this->subtitles = array();
+        }
+        $sub = new \stdClass();
+        $sub->source = $source;
+        $sub->language = $language;
+        $this->subtitles[] = $sub;
     }
 }
