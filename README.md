@@ -22,9 +22,14 @@ PHP library for interacting with the Qencode API.
       }
     }
 ``` 
-   Run composer:
+Run composer:
 ```bash
     php composer.phar install
+```
+
+Include vendor/autoload.php:
+```php
+   require 'vendor/autoload.php';
 ```
 
 If you don't use composer, use autoload.php located in the root of the repo:
