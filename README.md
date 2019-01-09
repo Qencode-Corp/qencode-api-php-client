@@ -14,11 +14,6 @@ PHP library for interacting with the Qencode API.
     {
       "require": {
         "qencode/api-client": "1.0.*"
-      },
-      "autoload": {
-        "classmap": [
-          "vendor/qencode/api-client/src/"
-        ]
       }
     }
 ``` 
