@@ -1,4 +1,4 @@
-# qencode-api-php-client
+qencode-api-php-client
 ====================
 PHP library for interacting with the Qencode API.
 
