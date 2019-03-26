@@ -145,14 +145,41 @@ class TranscodingTask {
     }
 
     private $subtitles;
+    private function initSubtitles() {
+        $this->subtitles = new \stdClass();
+        $this->subtitles->sources = array();
+        $this->subtitles->copy = 0;
+    }
 
+    /**
+     * Adds subtitles to a task
+     * @param $source Subtitles file URL
+     * @param $language Subtitles file language
+     */
     public function addSubtitles($source, $language) {
         if ($this->subtitles == null) {
-            $this->subtitles = array();
+            $this->initSubtitles();
         }
         $sub = new \stdClass();
         $sub->source = $source;
         $sub->language = $language;
-        $this->subtitles[] = $sub;
+        $this->subtitles->sources[] = $sub;
+    }
+
+    /**
+     * Sets subtitles / closed captions copy mode: 0 - disabled (default), 1 - existing eia608 or eia708 closed captions
+     * are copied to output stream
+     * @param $value
+     */
+    public function setSubtitlesCopyMode($value) {
+        if ($this->subtitles == null) {
+            $this->initSubtitles();
+        }
+        if ($value) {
+            $this->subtitles->copy = 1;
+        }
+        else {
+            $this->subtitles->copy = 0;
+        }
     }
 }

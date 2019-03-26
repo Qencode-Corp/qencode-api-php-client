@@ -24,8 +24,9 @@ class QencodeApiClient
 
     public $url = 'https://api.qencode.com/';
     public $version = 'v1';
+    private $supported_versions = array('v1', 'v1.1');
 
-    const USER_AGENT = 'Qencode PHP API SDK 1.0';
+    const USER_AGENT = 'Qencode PHP API SDK 1.1';
 
     /**
      * Maximum amount of time in seconds that is allowed to make the connection to the API server
@@ -42,9 +43,10 @@ class QencodeApiClient
     /**
      * @param string $key Qencode Project API key
      * @param string $url Optional url to any different API endpoint
+     * @param string $version Optional API version
      * @throws \Qencode\Exceptions\QencodeException if the library failed to initialize
      */
-    public function __construct($key, $url = null)
+    public function __construct($key, $url = null, $version = null)
     {
         if (strlen($key) < 12) {
             throw new QencodeException('Missing or invalid Qencode project api key!');
@@ -55,8 +57,23 @@ class QencodeApiClient
             }
             $this->url = $url;
         }
+        if ($version) {
+            $version = strtolower($version);
+            if (in_array($version, $this->supported_versions)) {
+                $this->version = $version;
+                if ($version == 'v1.1') {
+                    $this->url = $this->v1_1_get_endpoint();
+                }
+            }
+            else throw new QencodeException('Unsupported API version: '.$version);
+        }
         $this->key = $key;
         $this->getAccessToken();
+    }
+
+    private function v1_1_get_endpoint() {
+        $api_host = file_get_contents($this->url.'/v1.1');
+        return 'https://'.$api_host;
     }
 
     private function getAccessToken() {
@@ -127,7 +144,7 @@ class QencodeApiClient
         else {
             $url = $this->url . '/' . $this->version . '/' . trim($path, '/');
         }
-
+        echo "URL: ".$url."\n";
         if (!empty($params) & is_array($params)) {
             $params = http_build_query($params);
         }
