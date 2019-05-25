@@ -57,20 +57,43 @@ class TranscodingTask {
         $this->subtitles = null;
     }
 
+    private $stitchVideoItems;
+    /**
+     * Adds a video for stitching
+     * @param string $url Source video URI. Can be http(s) url or tus uri
+     * @return StitchVideoItem
+     */
+    public function AddStitchVideoItem($url) {
+        $item = new StitchVideoItem();
+        if ($this->stitchVideoItems == undefined) {
+            $this->stitchVideoItems = [];
+        }
+        $item->url = $url;
+        $this->stitchVideoItems[] = $item;
+        return $item;
+    }
+
     /**
      * Starts transcoding job using specified transcoding profile or list of profiles
      * @param string|array $transcodingProfiles One or several transcoding profile identifiers. Can be comma-separated string or an array
-     * @param string $uri a link to input video or TUS uri
+     * @param string $uri a link to input video or TUS uri (ignored in case of stitching)
      * @param string $transferMethod Transfer method identifier
      * @param string $payload Any string data of 1000 characters max length. E.g. you could pass id of your site user uploading the video or any json object.
      * @return array start_encode API method response
      */
-    public function start($transcodingProfiles, $uri, $transferMethod = null, $payload = null) {
+    public function start($transcodingProfiles, $uri = null, $transferMethod = null, $payload = null) {
         $params = array(
             'task_token' => $this->taskToken,
-            'uri' => $uri,
             'profiles' => is_array($transcodingProfiles) ? implode(',', $transcodingProfiles) : $transcodingProfiles
         );
+        //echo 'stitchVideoItems: '.print_r($this->stitchVideoItems, true);
+        $arrays = null;
+        if (is_array($this->stitchVideoItems)) {
+            $arrays = array('stitch' => $this->stitchVideoItems);
+        }
+        else {
+            $params['uri'] = $uri;
+        }
         if ($transferMethod) {
             $params['transfer_method'] = $transferMethod;
         }
@@ -89,7 +112,7 @@ class TranscodingTask {
         if ($this->subtitles) {
             $params['subtitles'] = json_encode($this->subtitles);
         }
-        $response = $this->api->post('start_encode', $params);
+        $response = $this->api->post('start_encode', $params, $arrays);
         $this->statusUrl = $response['status_url'];
         return $response;
     }
@@ -101,10 +124,13 @@ class TranscodingTask {
      * @return array start_encode API method response
      */
     public function startCustom($task_params, $payload = null) {
+        if (is_array($this->stitchVideoItems)) {
+            $task_params->stitch = $this->stitchVideoItems;
+        }
         $query = array ('query' => $task_params);
         $query_json = json_encode($query);
         $query_json = preg_replace('/,\s*"[^"]+":null|"[^"]+":null,?/', '', $query_json);
-        echo $query_json."<br><br>";
+        //echo $query_json."\n\n";
         $params = array(
             'task_token' => $this->taskToken,
             'query' => $query_json

@@ -15,5 +15,9 @@ class CustomTranscodingParams {
      */
     public $format;
 
+    /**
+     * An endpoint address to accept a webhook notification on job events
+     * @var string
+     */
     public $callback_url;
 }

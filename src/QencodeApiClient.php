@@ -100,9 +100,9 @@ class QencodeApiClient
      * @throws \Qencode\Exceptions\QencodeApiException if the API call status code is not in the 2xx range
      * @throws QencodeException if the API call has failed or the response is invalid
      */
-    public function post($path, $params = [], $url = null)
+    public function post($path, $params = [], $arrays = null)
     {
-        return $this->request('POST', $path, $params);
+        return $this->request('POST', $path, $params, $arrays);
     }
 
     /**
@@ -133,7 +133,7 @@ class QencodeApiClient
      * @throws \Qencode\Exceptions\QencodeApiException
      * @throws \Qencode\Exceptions\QencodeException
      */
-    private function request($method, $path, array $params = [])
+    private function request($method, $path, array $params = [], $arrays = null)
     {
         $this->lastResponseRaw = null;
         $this->lastResponse = null;
@@ -144,13 +144,20 @@ class QencodeApiClient
         else {
             $url = $this->url . '/' . $this->version . '/' . trim($path, '/');
         }
-        echo "URL: ".$url."\n";
+        //echo "URL: ".$url."\n";
         if (!empty($params) & is_array($params)) {
             $params = http_build_query($params);
         }
+        if (is_array($arrays)) {
+            foreach ($arrays as $key => $value) {
+                $encoded_value = json_encode($value);
+                $encoded_value = preg_replace('/,\s*"[^"]+":null|"[^"]+":null,?/', '', $encoded_value);
+                $params .= '&'.$key.'='.$encoded_value;
+            }
+        }
         #echo $url;
         #echo "\n";
-        #echo $params."\n\n";
+        //echo $params."\n\n";
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_USERPWD, $this->key);

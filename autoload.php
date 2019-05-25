@@ -4,6 +4,7 @@ $files = array(
     "Exceptions/QencodeApiException.php",
     "Exceptions/QencodeClientException.php",
     "Classes/TranscodingTask.php",
+    "Classes/StitchVideoItem.php",
     "Classes/TranscodingTaskCollection.php",
     "Classes/CustomTranscodingParams.php",
     "Classes/Destination.php",
