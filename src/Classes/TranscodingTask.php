@@ -124,13 +124,24 @@ class TranscodingTask {
      * @return array start_encode API method response
      */
     public function startCustom($task_params, $payload = null) {
-        if (is_array($this->stitchVideoItems)) {
-            $task_params->stitch = $this->stitchVideoItems;
+
+        switch (gettype($task_params)) {
+            case 'object':
+                if (is_array($this->stitchVideoItems)) {
+                    $task_params->stitch = $this->stitchVideoItems;
+                }
+                $query = array ('query' => $task_params);
+                $query_json = json_encode($query);
+                break;
+            case 'string':
+                $query_json = $task_params;
+                break;
+            default:
+                $query_json = '';
         }
-        $query = array ('query' => $task_params);
-        $query_json = json_encode($query);
+
         $query_json = preg_replace('/,\s*"[^"]+":null|"[^"]+":null,?/', '', $query_json);
-        //echo $query_json."\n\n";
+//        echo $query_json."\n\n";
         $params = array(
             'task_token' => $this->taskToken,
             'query' => $query_json
