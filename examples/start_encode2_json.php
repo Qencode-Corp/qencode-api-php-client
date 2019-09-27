@@ -13,7 +13,18 @@ use Qencode\QencodeApiClient;
 
 // Replace this with your API key
 $apiKey = '12345678';
-$video_url = 'https://qa.qencode.com/static/1.mp4';
+$params = '
+{"query": {
+  "source": "https://qa.qencode.com/static/timer.mp4",
+  "format": [
+    {
+      "output": "mp4",
+      "size": "320x240",
+      "video_codec": "libx264"
+    }
+  ]
+  }
+}';
 
 $q = new QencodeApiClient($apiKey);
 
@@ -21,35 +32,6 @@ try {
 
     $task = $q->createTask();
     log_message("Created task: ".$task->getTaskToken());
-
-    $params = new CustomTranscodingParams();
-    $params->source = $video_url;
-
-    $format = new Format();
-    $format->destination = new Destination();
-    $format->destination->url = "s3://s3-your-region.amazonaws.com/your-bucket/folder";
-    $format->destination->key = "your-access-key";
-    $format->destination->secret = "your-secret-key";
-    $format->destination->permissions = "public-read";
-    $format->destination->storage_class = "REDUCED_REDUNDANCY";
-    $format->segment_duration = 4;
-    $format->output = "advanced_hls";
-
-    $stream = new Stream();
-    $stream->size = "1920x1080";
-    $stream->audio_bitrate = 128;
-    $vcodec_params = new Libx264_VideoCodecParameters();
-    $vcodec_params->vprofile = "baseline";
-    $vcodec_params->level = 31;
-    $vcodec_params->coder = 0;
-    $vcodec_params->flags2 = "-bpyramid+fastpskip-dct8x8";
-    $vcodec_params->partitions = "+parti8x8+parti4x4+partp8x8+partb8x8";
-    $vcodec_params->directpred = 2;
-
-    $stream->video_codec_parameters = $vcodec_params;
-
-    $format->stream = [$stream];
-    $params->format = [$format];
 
     $task->startCustom($params);
 
