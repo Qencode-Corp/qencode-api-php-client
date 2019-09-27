@@ -13,7 +13,7 @@ PHP library for interacting with the Qencode API.
 ```json
     {
       "require": {
-        "qencode/api-client": "1.02.*"
+        "qencode/api-client": "1.03.*"
       }
     }
 ``` 
