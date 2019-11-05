@@ -65,7 +65,7 @@ class TranscodingTask {
      */
     public function AddStitchVideoItem($url) {
         $item = new StitchVideoItem();
-        if ($this->stitchVideoItems == undefined) {
+        if (!isset($this->stitchVideoItems)) {
             $this->stitchVideoItems = [];
         }
         $item->url = $url;
