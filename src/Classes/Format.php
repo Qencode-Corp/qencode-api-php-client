@@ -32,4 +32,32 @@ class Format {
      * @var Stream
      */
     public $stream;
+
+    /**
+     * Enables/Disables per-title encoding mode. Defaults to 0.
+     * @var int
+     */
+    public $optimize_bitrate;
+
+    /**
+     * Limits the lowest CRF (quality) for Per-Title Encoding mode to the specified value.
+     * Possible values: from 0 to 51. Defaults to 0
+     * @var int
+     */
+    public $min_crf;
+
+    /**
+     * Limits the highest CRF (quality) for Per-Title Encoding mode to the specified value.
+     * Possible values: from 0 to 51. Defaults to 0
+     * @var int
+     */
+    public $max_crf;
+
+    /**
+     * Adjusts best CRF predicted for each scene with the specified value in Per-Title Encoding mode.
+     * Should be integer in range -10..10. Defaults to 0
+     * @var int
+     */
+    public $adjust_crf;
+
 }
