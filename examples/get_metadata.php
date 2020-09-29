@@ -4,24 +4,31 @@ require_once __DIR__ . '/../autoload.php';
 use Qencode\Exceptions\QencodeApiException;
 use Qencode\Exceptions\QencodeClientException;
 use Qencode\Exceptions\QencodeException;
-use Qencode\Classes\CustomTranscodingParams;
-use Qencode\Classes\Format;
-use Qencode\Classes\Stream;
-use Qencode\Classes\Destination;
-use Qencode\Classes\Libx264_VideoCodecParameters;
 use Qencode\QencodeApiClient;
+use Qencode\Classes\Metadata;
 
 // Replace this with your API key
-$apiKey = '12345678';
+$apiKey = 'abcde12345';
 $video_url = 'https://nyc3.s3.qencode.com/qencode/bbb_30s.mp4';
 
 $q = new QencodeApiClient($apiKey);
 
 try {
+    log_message('Getting metadata for: '.$video_url.' ...');
+    $video_info = $q->getMetadata($video_url);
 
-    $metdata = $q->getMetadata($video_url);
+    list($width, $height) = Metadata::get_video_dimensions($video_info);
+    log_message('width, px: '.$width);
+    log_message('height, px: '.$height);
 
-    log_message($metdata);
+    $bitrate = Metadata::get_bitrate($video_info);
+    log_message('bitrate, b/s: '.$bitrate);
+
+    $framerate = Metadata::get_framerate($video_info);
+    log_message('framerate, fps: '.$framerate);
+
+    $duration = Metadata::get_duration($video_info);
+    log_message('duration, sec: '.$duration);
 
     echo "DONE!";
 
@@ -37,7 +44,6 @@ try {
     var_export($q->getLastResponseRaw());
 }
 
-function log_message($json) {
-    $msg = json_encode($json);
+function log_message($msg) {
     echo $msg."\n";
 }
