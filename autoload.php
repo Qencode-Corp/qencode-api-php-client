@@ -10,6 +10,7 @@ $files = array(
     "Classes/Destination.php",
     "Classes/Format.php",
     "Classes/Stream.php",
+    "Classes/Metadata.php",
     "Classes/VideoCodecParameters.php",
     "QencodeApiClient.php",
 );

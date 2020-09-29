@@ -6,7 +6,7 @@ use Qencode\Exceptions\QencodeClientException;
 
 class TranscodingTask {
 
-    private $api;
+    public $api;
     private $taskToken;
     private $statusUrl;
     private $lastStatus;

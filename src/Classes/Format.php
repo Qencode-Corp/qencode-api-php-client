@@ -3,12 +3,18 @@
 namespace Qencode\Classes;
 
 class Format {
+
     /**
      * Output video format. Currently supported values are mp4, webm, advanced_hls, advanced_dash. Required.
      * @var string
      */
     public $output;
 
+    /**
+     * Output metadata version.
+     * @var string
+     */
+    public $metadata_version;
     /**
      * Output video file extension (for MP4 - defaults to '.mp4', for WEBM - defaults to '.webm').
      * @var string

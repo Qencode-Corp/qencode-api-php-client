@@ -5,6 +5,7 @@ namespace Qencode;
 use Qencode\Exceptions\QencodeApiException;
 use Qencode\Exceptions\QencodeException;
 use Qencode\Classes\TranscodingTask;
+use Qencode\Classes\Metadata;
 
 /**
  * Class QencodeClient
@@ -80,7 +81,7 @@ class QencodeApiClient
         $response = $this->post("access_token", array('api_key' => $this->key));
         $this->access_token = $response['token'];
     }
-
+    
     /**
      * Returns total available item count from the last request if it supports paging (e.g order list) or null otherwise.
      *
@@ -105,6 +106,20 @@ class QencodeApiClient
         return $this->request('POST', $path, $params, $arrays);
     }
 
+    
+    /**
+     * Perform a GET request to the API
+     * @param string $path Request path (e.g. 'start_encode')
+     * @param array $data Request body data as an associative array
+     * @param array $params Additional GET parameters as an associative array
+     * @return mixed API response
+     * @throws \Qencode\Exceptions\QencodeApiException if the API call status code is not in the 2xx range
+     * @throws QencodeException if the API call has failed or the response is invalid
+     */
+    public function get($path, $params = [], $arrays = null)
+    {
+        return $this->request('GET', $path, $params, $arrays);
+    }
     /**
      * Return raw response data from the last request
      * @return string|null Response data
@@ -165,7 +180,8 @@ class QencodeApiClient
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_MAXREDIRS, 3);
-
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $this->curlConnectTimeout);
         curl_setopt($curl, CURLOPT_TIMEOUT, $this->curlTimeout);
 
@@ -190,6 +206,9 @@ class QencodeApiClient
         $this->lastResponse = $response = json_decode($this->lastResponseRaw, true);
         //print_r($response);
 
+        if($method == 'GET')
+            return $response;
+
         if (!isset($response['error'])) {
             $e = new QencodeException('Invalid API response');
             $e->rawResponse = $this->lastResponseRaw;
@@ -213,5 +232,16 @@ class QencodeApiClient
         $response = $this->post('create_task', array('token' => $this->access_token));
         $task = new TranscodingTask($this, $response['task_token']);
         return $task;
+    }
+
+    /**
+     * @param string
+     */
+    public function getMetadata(string $url)
+    {
+        $response = $this->post('create_task', array('token' => $this->access_token));
+        $metadata = new Metadata($this, $response['task_token']);
+        $videoInfo = $metadata->get($url);
+        return $videoInfo;
     }
 }
