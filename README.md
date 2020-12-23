@@ -38,13 +38,29 @@ Instantiate Qencode API Client:
 ```php
    $q = new QencodeApiClient($apiKey);
 ```
-    
+Create a JSON query: 
+
+```php
+$params = '
+{"query": {
+  "source": "https://nyc3.s3.qencode.com/qencode/bbb_30s.mp4",
+  "format": [
+    {
+      "output": "mp4",
+      "size": "320x240",
+      "video_codec": "libx264"
+    }
+  ]
+  }
+}';
+```
 
 Create a new job:
 
 ```php
-   $task = $q->createTask(); 
-   $task->start($transcodingProfileId, $video_url);
+   $task = $q->createTask();
+
+   $task->startCustom($params);
 ```
 
 Query an existing job:
@@ -54,4 +70,4 @@ Query an existing job:
 ```
 
 ## Copyright
-Copyright 2018 Qencode, Inc.
+Copyright 2021 Qencode, Inc.

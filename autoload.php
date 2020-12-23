@@ -11,6 +11,7 @@ $files = array(
     "Classes/Format.php",
     "Classes/Stream.php",
     "Classes/VideoCodecParameters.php",
+    "Classes/Drm.php",
     "QencodeApiClient.php",
 );
 

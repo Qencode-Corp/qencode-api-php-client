@@ -138,7 +138,7 @@ class QencodeApiClient
         $this->lastResponseRaw = null;
         $this->lastResponse = null;
 
-        if (strpos(strtolower($path), 'http') === 0) {
+        if (strpos(strtolower($path), 'http') === 0  || strpos(strtolower($path), 'https') === 0) {
             $url = $path;
         }
         else {

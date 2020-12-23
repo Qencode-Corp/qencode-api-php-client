@@ -2,36 +2,58 @@
 require_once __DIR__ . '/../autoload.php';
 
 use Qencode\Exceptions\QencodeApiException;
+use Qencode\Exceptions\QencodeClientException;
 use Qencode\Exceptions\QencodeException;
+use Qencode\Classes\CustomTranscodingParams;
+use Qencode\Classes\Format;
+use Qencode\Classes\Stream;
+use Qencode\Classes\Destination;
+use Qencode\Classes\Libx264_VideoCodecParameters;
+use Qencode\Classes\Drm;
 use Qencode\QencodeApiClient;
 
 // Replace this with your API key
-// API key and params below, such as transcoding profile id and transfer method id
-// can be found in your account on https://cloud.qencode.com under Project settings
-$apiKey = 'abcdefgh';
-$transcodingProfileId = 'abcdefgh';
-$transferMethodId = 'abcdefgh';
+$apiKey = 'your-api-qencode-key';
+$drm_username = 'my.ezdrm@email.com';
+$drm_password = 'your-ezdrm-password';
 
-$video_url = 'https://qa.qencode.com/static/bbb_sunflower_1080p_60fps_normal_339mb.mp4';
+$params = '
+{
+  "query": {
+    "format": [
+      {
+        "output": "advanced_dash",
+        "stream": [
+          {
+            "video_codec": "libx264",
+            "height": 360,
+            "audio_bitrate": 128,
+            "keyframe": 25,
+            "bitrate": 950
+          }
+        ],
+        "cenc_drm" : {cenc_drm}
+      }
+    ],
+    "source": "https://nyc3.s3.qencode.com/qencode/bbb_30s.mp4"
+  }
+}';
 
-$q = new QencodeApiClient($apiKey);
+$q = new QencodeApiClient($apiKey, $url='https://api-qa.qencode.com');
 
 try {
 
-    $task = $q->createTask();  // /v1/create_task
+    $task = $q->createTask();
     log_message("Created task: ".$task->getTaskToken());
 
-    //set start time (in seconds) in input video to begin transcoding from
-    $task->start_time = 30.0;
-    //duration of the video fragment (in seconds) to be transcoded
-    $task->duration = 10.0;
+    $drm = new Drm($drm_username, $drm_password);
+    $drm_params = $drm->cenc_drm();
+    log_message("Drm: ".print_r($drm_params, true));
 
-    //Setting output file name with a custom output path variable.
-    //This refers to Output path values specified in transcoding profile for video or image settings
-    //See https://portal.qencode.com/docs for more examples
-    $task->output_path_variables->filename = 'qencode_test';
+    $params = str_replace('{cenc_drm}', json_encode($drm_params['data']), $params);
+    log_message("Query: ".print_r($params, true));
 
-    $task->start($transcodingProfileId, $video_url, $transferMethodId);
+    $task->startCustom($params);
 
     do {
         sleep(5);
@@ -45,7 +67,6 @@ try {
         log_message($video['user_tag'] . ': ' . $video['url']);
     }
     echo "DONE!";
-
 
 } catch (QencodeClientException $e) {
     // We got some inconsistent state in client application (e.g. task_token not found when requesting status)
