@@ -237,7 +237,7 @@ class QencodeApiClient
     /**
      * @param string
      */
-    public function getMetadata(string $url)
+    public function getMetadata($url)
     {
         $response = $this->post('create_task', array('token' => $this->access_token));
         $metadata = new Metadata($this, $response['task_token']);
