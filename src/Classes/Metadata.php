@@ -13,7 +13,7 @@ class Metadata extends TranscodingTask {
      * Gets Metadata vidoe
      * @return object
      */
-    public function get(string $video_url) {
+    public function get($video_url) {
         $params = new CustomTranscodingParams();
         $format = new Format();
         $format->output = "metadata";
