@@ -13,7 +13,8 @@ use Qencode\QencodeApiClient;
 
 // Replace this with your API key
 $apiKey = '12345678';
-$video_url = 'https://qa.qencode.com/static/1.mp4';
+//$video_url = 'https://qa.qencode.com/static/1.mp4';
+$video_url = 'https://nyc3.s3.qencode.com/qencode/bbb_30s.mp4';
 
 $q = new QencodeApiClient($apiKey);
 

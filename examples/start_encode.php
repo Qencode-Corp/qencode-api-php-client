@@ -12,7 +12,8 @@ $apiKey = 'abcdefgh';
 $transcodingProfileId = 'abcdefgh';
 $transferMethodId = 'abcdefgh';
 
-$video_url = 'https://qa.qencode.com/static/bbb_sunflower_1080p_60fps_normal_339mb.mp4';
+//$video_url = 'https://qa.qencode.com/static/bbb_sunflower_1080p_60fps_normal_339mb.mp4';
+$video_url = 'https://nyc3.s3.qencode.com/qencode/bbb_30s.mp4';
 
 $q = new QencodeApiClient($apiKey);
 

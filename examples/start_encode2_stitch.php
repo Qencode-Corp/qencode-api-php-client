@@ -15,8 +15,8 @@ use Qencode\QencodeApiClient;
 // API key can be found in your account on https://cloud.qencode.com under Project settings
 $apiKey = '5a5db6fa5b4c5';
 
-$video1_url = 'https://qa.qencode.com/static/1.mp4';
-$video2_url = 'https://qa.qencode.com/static/bbb_sunflower_1080p_60fps_normal_339mb.mp4';
+$video1_url = 'https://nyc3.s3.qencode.com/qencode/bbb_30s.mp4';
+$video2_url = 'https://nyc3.digitaloceanspaces.com/qencode/manyvids/60_Tinder_hookup_BEFORE_MV_upload.mp';
 
 $q = new QencodeApiClient($apiKey);
 
