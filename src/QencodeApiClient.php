@@ -175,7 +175,7 @@ class QencodeApiClient
         //echo $params."\n\n";
         $curl = curl_init($url);
 
-        curl_setopt($curl, CURLOPT_USERPWD, $this->key);
+//        curl_setopt($curl, CURLOPT_USERPWD, $this->key);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
