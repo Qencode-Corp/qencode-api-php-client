@@ -16,6 +16,7 @@ $apiKey = '12345678';
 $params = '
 {"query": {
   "source": "https://nyc3.s3.qencode.com/qencode/bbb_30s.mp4",
+  "encoder_version": 2,
   "format": [
     {
       "output": "mp4",
