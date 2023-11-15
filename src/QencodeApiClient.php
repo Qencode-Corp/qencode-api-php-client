@@ -170,12 +170,8 @@ class QencodeApiClient
                 $params .= '&'.$key.'='.$encoded_value;
             }
         }
-        #echo $url;
-        #echo "\n";
-        //echo $params."\n\n";
         $curl = curl_init($url);
 
-        curl_setopt($curl, CURLOPT_USERPWD, $this->key);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
@@ -186,13 +182,13 @@ class QencodeApiClient
         curl_setopt($curl, CURLOPT_TIMEOUT, $this->curlTimeout);
 
         curl_setopt($curl, CURLOPT_USERAGENT, self::USER_AGENT);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
-
+        
+        if ($method == 'POST') {
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $params);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+        }
 
         $this->lastResponseRaw = curl_exec($curl);
-
         $errorNumber = curl_errno($curl);
         $error = curl_error($curl);
         curl_close($curl);
@@ -201,10 +197,7 @@ class QencodeApiClient
             throw new QencodeException('CURL: ' . $error, $errorNumber);
         }
 
-        #echo $this->lastResponseRaw;
-        #echo "\n\n";
         $this->lastResponse = $response = json_decode($this->lastResponseRaw, true);
-        //print_r($response);
 
         if($method == 'GET')
             return $response;
@@ -214,12 +207,6 @@ class QencodeApiClient
             $e->rawResponse = $this->lastResponseRaw;
             throw $e;
         }
-        /*$status = (int)$response['code'];
-        if ($status < 200 || $status >= 300) {
-            $e = new QencodeApiException((string)$response['result'], $status);
-            $e->rawResponse = $this->lastResponseRaw;
-            throw $e;
-        }*/
         if ($response['error'] != 0) {
             $e = new QencodeApiException($response['message']);
             $e->rawResponse = $this->lastResponseRaw;
