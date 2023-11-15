@@ -22,8 +22,9 @@ class QencodeApiClient
     private $lastResponseRaw;
 
     private $lastResponse;
-
-    public $url = 'https://api.qencode.com/';
+// fix "POST //v1/access_token HTTP/1.0"
+//    public $url = 'https://api.qencode.com/';
+    public $url = 'https://api.qencode.com';
     public $version = 'v1';
     private $supported_versions = array('v1', 'v1.1');
 

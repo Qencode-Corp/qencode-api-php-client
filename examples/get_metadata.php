@@ -8,7 +8,7 @@ use Qencode\QencodeApiClient;
 use Qencode\Classes\Metadata;
 
 // Replace this with your API key
-$apiKey = 'abcde12345';
+$apiKey = '1234567890123';
 $video_url = 'https://nyc3.s3.qencode.com/qencode/bbb_30s.mp4';
 
 $q = new QencodeApiClient($apiKey);
