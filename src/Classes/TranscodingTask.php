@@ -86,7 +86,6 @@ class TranscodingTask {
             'task_token' => $this->taskToken,
             'profiles' => is_array($transcodingProfiles) ? implode(',', $transcodingProfiles) : $transcodingProfiles
         );
-        //echo 'stitchVideoItems: '.print_r($this->stitchVideoItems, true);
         $arrays = null;
         if (is_array($this->stitchVideoItems)) {
             $arrays = array('stitch' => $this->stitchVideoItems);
@@ -141,7 +140,6 @@ class TranscodingTask {
         }
 
         $query_json = preg_replace('/,\s*"[^"]+":null|"[^"]+":null,?/', '', $query_json);
-//        echo $query_json."\n\n";
         $params = array(
             'task_token' => $this->taskToken,
             'query' => $query_json
@@ -161,9 +159,16 @@ class TranscodingTask {
      */
     public function getStatus() {
         $params = array('task_tokens[]' => $this->taskToken);
-        //TODO: fallback to /v1/status
-        $response = $this->api->post($this->statusUrl, $params);
-        $this->lastStatus = $response['statuses'][$this->taskToken];
+        
+        try {
+            $response = $this->api->post($this->statusUrl, $params);
+        } catch (Exception $e) {
+            // If the post request fails, fallback to the default URL
+            $this->statusUrl = 'https://api.qencode.com/v1/status';
+            $response = $this->api->post($this->statusUrl, $params);
+        }
+
+        $this->lastxStatus = $response['statuses'][$this->taskToken];
         if ($this->lastStatus == null) {
             throw new QencodeClientException('Task '. $this->taskToken. ' not found!');
         }
