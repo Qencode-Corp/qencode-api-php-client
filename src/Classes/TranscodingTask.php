@@ -2,6 +2,8 @@
 
 namespace Qencode\Classes;
 
+use Qencode\Exceptions\QencodeException;
+use Qencode\Exceptions\QencodeApiException;
 use Qencode\Exceptions\QencodeClientException;
 
 class TranscodingTask {
@@ -153,6 +155,11 @@ class TranscodingTask {
         return $response;
     }
 
+    private function _retryStatus($params) {
+        $this->statusUrl = 'https://api.qencode.com/v1/status';
+        return $this->api->post($this->statusUrl, $params);
+    }
+
     /**
      * Gets current task status from qencode service
      * @return array status API method response
@@ -161,14 +168,20 @@ class TranscodingTask {
         $params = array('task_tokens[]' => $this->taskToken);
         
         try {
-            $response = $this->api->post($this->statusUrl, $params);
-        } catch (Exception $e) {
-            // If the post request fails, fallback to the default URL
-            $this->statusUrl = 'https://api.qencode.com/v1/status';
-            $response = $this->api->post($this->statusUrl, $params);
+            $response = $this->api->post($this->statusUrl.'/test', $params);
+        }
+        // If the post request fails, fallback to the default URL
+        catch(QencodeException $qe) {
+            $response = $this->_retryStatus($params);
+        }
+        catch(Exception $e) {
+            $response = $this->_retryStatus($params);
+        } 
+        catch (Throwable $t) {
+            $response = $this->_retryStatus($params);
         }
 
-        $this->lastxStatus = $response['statuses'][$this->taskToken];
+        $this->lastStatus = $response['statuses'][$this->taskToken];
         if ($this->lastStatus == null) {
             throw new QencodeClientException('Task '. $this->taskToken. ' not found!');
         }
