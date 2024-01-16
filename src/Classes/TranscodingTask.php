@@ -168,7 +168,7 @@ class TranscodingTask {
         $params = array('task_tokens[]' => $this->taskToken);
         
         try {
-            $response = $this->api->post($this->statusUrl.'/test', $params);
+            $response = $this->api->post($this->statusUrl, $params);
         }
         // If the post request fails, fallback to the default URL
         catch(QencodeException $qe) {
