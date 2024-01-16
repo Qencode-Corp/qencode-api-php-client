@@ -195,7 +195,7 @@ class QencodeApiClient
         curl_close($curl);
 
         if ($errorNumber) {
-            throw new QencodeException('CURL: ' . $error, $errorNumber);
+            throw new QencodeException("CURL request error: {$method} {$url}" . $error, $errorNumber);
         }
 
         $this->lastResponse = $response = json_decode($this->lastResponseRaw, true);
